@@ -1,0 +1,24 @@
+# Arduino IDE build output
+build/
+*.bin
+*.elf
+*.map
+*.hex
+
+# PlatformIO, in case anyone adds it later
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# editors
+.vscode/
+.idea/
+*.swp
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# CAN logs from tools/logger.py
+*.log
+kcan_log_*.txt
