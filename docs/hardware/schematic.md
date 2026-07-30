@@ -1,6 +1,7 @@
 # Wiring
 
-Block level. There is no PCB, this is five modules on a piece of prototype board.
+Block level. This is five modules on a piece of prototype board. A PCB and proper schematics are
+being drawn up, and this page will be replaced when they exist.
 
 Full pin tables are in [pinout.md](pinout.md). The car side connector is documented in
 [headunit-connector-a42x1b.jpg](headunit-connector-a42x1b.jpg).

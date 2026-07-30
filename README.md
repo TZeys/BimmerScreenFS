@@ -9,8 +9,13 @@ I built it because the 220d's cluster has no oil temperature gauge and no boost 
 both without an OBD dongle hanging out of the dash or a phone app in the way. Everything the display
 needs is already on the bus. It just is not shown to you.
 
-There is no photo of it fitted yet. When I get a decent shot of the panel in the dash it goes in
-`docs/images/`.
+![BimmerScreenFS fitted in the centre vent panel](docs/images/installed-in-car.jpg)
+
+It sits in the centre air vent panel, under the iDrive screen. That slot is about the right size for
+a 2.8 inch panel and it puts the readouts where you already glance for the climate control.
+
+Status: the prototype in that photo has been working in the car for a while. I am drawing up a PCB
+and proper schematics now, so the current build is still five modules on prototype board.
 
 ## What it shows
 

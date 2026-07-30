@@ -22,3 +22,7 @@ desktop.ini
 # CAN logs from tools/logger.py
 *.log
 kcan_log_*.txt
+
+# phone originals. GitHub cannot render HEIC, so only the converted JPEG is committed
+*.heic
+*.HEIC
