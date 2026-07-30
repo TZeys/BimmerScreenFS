@@ -75,8 +75,8 @@ termination populated, so check the board and remove it if it is there.
 | `SDO` / `MISO` | leave unconnected |
 
 The backlight is wired straight to 3.3V. There is no PWM and no brightness control anywhere in the
-firmware, so it is on at full whenever the module has power. That matters for the drain problem
-described in [schematic.md](schematic.md).
+firmware, so it is on at full whenever the module has power, including the half hour between locking
+the car and the supply rail dropping. See [schematic.md](schematic.md) for what that rail does.
 
 ## DFPlayer Mini
 
@@ -122,7 +122,7 @@ the card rather than by filename, so copy them across one at a time in order. Se
 
 | From | To |
 |------|-----|
-| Headunit connector pin 15 (12V, terminal 30) | LM2596 input |
+| Headunit connector pin 15 (12V, sleeps ~30 min after locking) | LM2596 input |
 | Headunit connector pin 12 (GND) | LM2596 ground and the common ground |
 | LM2596 5V output | ESP32-C3 `5V` pin, DFPlayer `VCC` |
 | ESP32-C3 `3V3` pin | SN65HVD230 `VCC`, TFT `VCC`, TFT `LED` |

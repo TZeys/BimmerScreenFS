@@ -10,7 +10,8 @@ Full pin tables are in [pinout.md](pinout.md). The car side connector is documen
 flowchart LR
     subgraph CAR["Headunit connector A42x1B"]
         P15["pin 15
-        12V terminal 30"]
+        12V, sleeps ~30 min
+        after locking"]
         P12["pin 12
         GND"]
         P11["pin 11
@@ -83,27 +84,31 @@ display. Put a 1 to 2 A inline fuse in the tap, as close to the connector as the
 short in the module without one means a 20A fuse holding happily while the thin wire you added
 becomes the fuse.
 
-## The drain problem
+## Power and standby
 
-**Pin 15 is terminal 30, which is permanent battery, not switched ignition.** The connector diagram
-confirms it. This has consequences the firmware does not deal with:
+The connector diagram labels pin 15 as Terminal 30, which normally means permanent battery. On this
+car it does not behave that way. The rail comes up when the car is unlocked and drops about 30
+minutes after it is locked, because BMW's energy management sleeps the head unit's supply rather
+than feeding it continuously.
 
-- The module is powered whenever the battery is connected, parked or not.
-- The firmware has no sleep path. On ignition off it plays a sound, runs the shutdown animation,
-  blanks the screen and then keeps sitting in `loop()` draining the CAN receive queue.
-- The backlight is hardwired to 3.3V, so it stays lit behind a black screen.
+That turns out to be exactly what this build wants, and it is why there is no sleep code in the
+firmware:
 
-The result is a constant parasitic draw that does not go away when you park. I have not put a meter
-on mine over a full night, so I am not going to quote a figure, but the mechanism is obvious enough
-that you should measure yours before leaving the car for a week. Three ways out, roughly in order of
-effort:
+- Unlock the car and the display boots on its own.
+- Ignition off runs the shutdown sound and the CRT collapse, then blanks the screen. The rail is
+  still live at that point, so the animation actually gets to finish instead of being cut off
+  mid-frame.
+- Half an hour or so after locking, the rail drops and the module goes off with it.
 
-1. Move the 12V tap to a switched supply, which costs you the shutdown animation.
-2. Drive the backlight from a GPIO through a transistor and turn it off with the display.
-3. Add `esp_deep_sleep_start()` on the ignition-off edge with a GPIO wake, which is the proper fix
-   and is not implemented.
+So there is no parasitic drain to design around. The module does stay awake through that half hour
+with the backlight lit behind a black screen, which is wasted current, but it is bounded and the
+car decides when it ends. Driving the backlight from a GPIO through a transistor would tidy that up
+and is the only reason to bother.
 
-Worth saying plainly: this is a known open issue, not a solved one.
+**This depends entirely on the rail you tap.** If you find a genuinely permanent 12V feed instead,
+none of the above holds: nothing in the firmware sleeps, the backlight is hardwired to 3.3V, and you
+will flatten the battery over a couple of weeks. Confirm what your rail actually does, by leaving
+the car locked and measuring, before you trust it.
 
 ## Tapping the bus
 

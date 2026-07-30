@@ -24,9 +24,12 @@ Repo work:
 
 Things I worked out while writing the docs rather than while building it:
 
-- Pin 15 on the head unit connector is terminal 30, so the module is on permanent battery and draws
-  current while the car is parked. Nothing in the firmware sleeps and the backlight is hardwired on.
-  This is now written down as a known problem instead of something I had not thought about.
+- Pin 15 is labelled Terminal 30 on the connector diagram, but it is not permanently live on this
+  car. It wakes when the car is unlocked and drops about 30 minutes after locking, because the energy
+  management sleeps the head unit feed. I briefly had this documented the other way round, as a
+  standby drain problem, on the strength of the connector label alone. It is not a problem: it is why
+  the display powers itself up and down without any sleep code, and why the shutdown animation gets
+  to finish after ignition off.
 - GPIO5 is CAN TX and also the C3's default SPI MISO. It works because the display is never read and
   listen-only never drives TX, but it is luck rather than design.
 - GPIO20 and GPIO21 are the default UART0 pins, so the audio only works because USB CDC On Boot is
@@ -42,5 +45,5 @@ Firmware state at this point, for reference:
   to 64 rpm steps and read about 60 rpm with the engine stopped.
 - TWAI is listen-only at 500 kbit/s with a 32 frame receive queue.
 
-Known and not fixed: standby drain, consumption reads about 4% high against the OBC, `0x2F3` scaling
-is well supported but unproven, tank accuracy needs a few drives to build anchors.
+Known and not fixed: consumption reads about 4% high against the OBC, `0x2F3` scaling is well
+supported but unproven, and tank accuracy needs a few drives to build up calibration anchors.

@@ -71,6 +71,14 @@ links and the reasoning behind each choice is in [docs/hardware/BOM.md](docs/har
 Power and CAN both come off the head unit connector (A42x1B): pin 15 for 12V, pin 12 for ground,
 pin 11 for CAN high, pin 9 for CAN low.
 
+That 12V rail is worth understanding, because it is what makes the whole thing self-managing. The
+connector labels it Terminal 30, but on this car it is not permanently live: it comes up when the car
+is unlocked and drops roughly 30 minutes after it is locked, since BMW's energy management sleeps the
+head unit feed. So the display powers itself up when you get in, finishes its shutdown animation
+after ignition off because the rail is still there, and then goes off by itself later. No sleep code,
+and nothing to flatten the battery. If you tap a genuinely permanent feed instead, that stops being
+true, so check your rail first.
+
 | Signal | GPIO |
 |--------|------|
 | CAN RX / TX | 3 / 5 |
@@ -133,13 +141,6 @@ Full instructions and how to test on a bench with no car are in
 [docs/firmware/build-and-flash.md](docs/firmware/build-and-flash.md).
 
 ## Known problems
-
-**It draws current while parked.** Pin 15 on the head unit connector is terminal 30, which is
-permanent battery rather than switched ignition. Nothing in the firmware sleeps, and the backlight is
-wired straight to 3.3V, so on ignition off it blanks the screen and then keeps running. I have not
-measured the standby draw over a full night, so I am not going to quote a number, but you should
-before leaving the car for a week. Fixes and workarounds are in
-[docs/hardware/schematic.md](docs/hardware/schematic.md).
 
 **Consumption is about 4% high.** At wide open throttle I read 29.5 L/100km where the cluster said
 28.2. `LITRES_PER_COUNT` in the sketch is the knob for that.
