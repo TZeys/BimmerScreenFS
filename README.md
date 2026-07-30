@@ -23,14 +23,18 @@ Eight values on one screen, updated about seven times a second:
 
 | Readout | Notes |
 |---------|-------|
-| Oil temperature | colour ramps blue to green to red across the range |
-| Coolant temperature | same colour ramp |
+| Oil temperature | warns over 95 °C |
+| Coolant temperature | warns over 95 °C |
 | Boost | bar, zeroed against ambient on every start so weather and altitude cancel out |
 | RPM | white, yellow over 4000, red over 5000 |
 | Speed | km/h |
 | Trip distance | integrated from speed, resets with the ignition |
 | Fuel | litres to about 0.1 L, better resolution than the car broadcasts |
 | Consumption | L/100km moving, L/h at a standstill |
+
+RPM is the only value that changes colour: white, yellow from 4000, red from 5000. Everything else
+is drawn white. There is a `getTempColor()` in the sketch that ramps blue to green to red, but
+nothing calls it yet, so oil and coolant do not change colour in the car.
 
 Sounds on ignition on, ignition off, oil over 95 °C, coolant over 95 °C, and rpm over 4000. Each
 warning has hysteresis so a value sitting on the limit does not chirp at you repeatedly.
