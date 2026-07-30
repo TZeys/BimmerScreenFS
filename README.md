@@ -161,7 +161,12 @@ misleading I have said so in the CAN doc. The fuel sender scaling in particular 
 
 ## Licence
 
-MIT, see [LICENSE](LICENSE). The vendored `Adafruit_ILI9341.h` is Adafruit's and stays BSD.
+MIT, see [LICENSE](LICENSE). It was GPL-3.0 until 2026-07-30; the reason for the change is in the
+[changelog](CHANGELOG.md).
+
+One exception: `src/esp32c3sp_firmware_bmw/Adafruit_ILI9341.h` is Adafruit's file, written by Limor
+Fried, and stays under its own BSD licence. The full notice is in the header of that file, where
+their licence requires it to be.
 
 ## Disclaimer
 
