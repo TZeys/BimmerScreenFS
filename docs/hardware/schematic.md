@@ -1,0 +1,118 @@
+# Wiring
+
+Block level. There is no PCB, this is five modules on a piece of prototype board.
+
+Full pin tables are in [pinout.md](pinout.md). The car side connector is documented in
+[headunit-connector-a42x1b.jpg](headunit-connector-a42x1b.jpg).
+
+```mermaid
+flowchart LR
+    subgraph CAR["Headunit connector A42x1B"]
+        P15["pin 15
+        12V terminal 30"]
+        P12["pin 12
+        GND"]
+        P11["pin 11
+        CAN HIGH"]
+        P9["pin 9
+        CAN LOW"]
+    end
+
+    FUSE["inline fuse
+    1 to 2 A"]
+    BUCK["LM2596
+    12V to 5.0V"]
+
+    subgraph ESP["ESP32-C3 SuperMini"]
+        V5["5V"]
+        V33["3V3"]
+        G3["GPIO3"]
+        G5["GPIO5"]
+        G1["GPIO1"]
+        G4["GPIO4"]
+        G6["GPIO6"]
+        G8["GPIO8"]
+        G20["GPIO20"]
+        G21["GPIO21"]
+    end
+
+    CAN["SN65HVD230
+    transceiver"]
+    TFT["ILI9341
+    2.8in 320x240"]
+    MP3["DFPlayer Mini"]
+    SPK["speaker"]
+
+    P15 --> FUSE --> BUCK
+    P12 --> BUCK
+    BUCK -->|5V| V5
+    BUCK -->|5V| MP3
+
+    P11 -->|CANH| CAN
+    P9  -->|CANL| CAN
+    CAN -->|RX| G3
+    G5  -->|TX| CAN
+    V33 -->|3.3V| CAN
+
+    G4 -->|SCK| TFT
+    G6 -->|MOSI| TFT
+    G8 -->|CS| TFT
+    G1 -->|DC| TFT
+    V33 -->|3.3V + LED + RST| TFT
+
+    G21 -->|1k series| MP3
+    MP3 -->|TX| G20
+    MP3 --> SPK
+```
+
+## Grounds
+
+Everything shares one ground, and that ground is the car's, taken from pin 12 of the headunit
+connector. The transceiver needs the same reference the car uses or CANH and CANL sit at the wrong
+common mode voltage and the bus goes deaf.
+
+Do not run a separate chassis ground alongside pin 12. Two ground paths of different lengths is how
+you get a loop, and on a CAN tap that shows up as intermittent frame errors that are miserable to
+chase.
+
+## Fusing
+
+Pin 15 is fused at 20A because that fuse exists to protect the head unit's wiring, not a 250 mA
+display. Put a 1 to 2 A inline fuse in the tap, as close to the connector as the loom allows. A
+short in the module without one means a 20A fuse holding happily while the thin wire you added
+becomes the fuse.
+
+## The drain problem
+
+**Pin 15 is terminal 30, which is permanent battery, not switched ignition.** The connector diagram
+confirms it. This has consequences the firmware does not deal with:
+
+- The module is powered whenever the battery is connected, parked or not.
+- The firmware has no sleep path. On ignition off it plays a sound, runs the shutdown animation,
+  blanks the screen and then keeps sitting in `loop()` draining the CAN receive queue.
+- The backlight is hardwired to 3.3V, so it stays lit behind a black screen.
+
+The result is a constant parasitic draw that does not go away when you park. I have not put a meter
+on mine over a full night, so I am not going to quote a figure, but the mechanism is obvious enough
+that you should measure yours before leaving the car for a week. Three ways out, roughly in order of
+effort:
+
+1. Move the 12V tap to a switched supply, which costs you the shutdown animation.
+2. Drive the backlight from a GPIO through a transistor and turn it off with the display.
+3. Add `esp_deep_sleep_start()` on the ignition-off edge with a GPIO wake, which is the proper fix
+   and is not implemented.
+
+Worth saying plainly: this is a known open issue, not a solved one.
+
+## Tapping the bus
+
+Pins 9 and 11 at the headunit connector are the pair I used. Reaching them means pulling the head
+unit, which on the F22 is trim clips and four bolts rather than anything structural.
+
+I would rather solder and heatshrink onto the back of the connector than use a piercing tap. A
+piercing tap on a twisted CAN pair breaks the twist at the junction and lets the stub radiate, and
+it eventually corrodes.
+
+Keep the stub short. A tap on a 500 kbit/s bus is an unterminated branch, and long branches reflect.
+Mine is about 10 cm from connector to transceiver. Keep CANH and CANL twisted together right up to
+the transceiver pins.
