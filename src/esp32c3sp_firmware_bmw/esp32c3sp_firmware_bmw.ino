@@ -1,3 +1,12 @@
+// BimmerScreenFS - BMW CAN bus gauge display
+//
+// Target: ESP32-C3 SuperMini, Arduino core, 500 kbit/s CAN via SN65HVD230, 2.8" ILI9341 SPI.
+// Reads oil and coolant temperature, rpm, speed, boost, fuel level and instant consumption
+// off a 2014 F22 220d (N47D20C) and draws them on a 320x240 panel. The TWAI controller is
+// opened listen-only, so this node never transmits on the car's bus.
+//
+// Pinout, CAN IDs and flashing notes are in docs/. Bus decodes are mine unless noted there.
+
 #include <Arduino.h>
 #include "driver/twai.h"
 #include <DFRobotDFPlayerMini.h>
