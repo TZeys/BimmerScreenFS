@@ -1,0 +1,102 @@
+VERSION "BimmerScreenFS - BMW F22 220d N47D20C 2014 - 500 kbit/s"
+
+
+NS_ :
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: DME KOMBI JBE DISPLAY
+
+
+BO_ 165 DME_EngineData: 8 DME
+ SG_ EngineSpeed : 40|16@1+ (0.25,0) [0|16383.75] "rpm" DISPLAY
+ SG_ StatusConst : 56|8@1+ (1,0) [0|255] "" DISPLAY
+
+BO_ 755 DME_ManifoldPressure: 8 DME
+ SG_ ManifoldPressureAbs : 32|16@1+ (0.5,0) [0|32767.5] "mbar" DISPLAY
+
+BO_ 708 DME_FuelIntegrator: 8 DME
+ SG_ FuelCounter : 0|16@1+ (1,0) [0|65535] "counts" DISPLAY
+
+BO_ 1017 DME_Temperatures: 8 DME
+ SG_ VacuumDomainPressure : 24|8@1+ (1,0) [0|255] "" DISPLAY
+ SG_ CoolantTemp : 32|8@1+ (1,-48) [-48|207] "degC" DISPLAY
+ SG_ OilTemp : 40|8@1+ (1,-48) [-48|207] "degC" DISPLAY
+
+BO_ 417 Chassis_VehicleSpeed: 5 Vector__XXX
+ SG_ VehicleSpeed : 16|16@1+ (0.015625,0) [0|1023.984375] "km/h" DISPLAY
+
+BO_ 816 KOMBI_FuelOdometer: 8 KOMBI
+ SG_ Odometer : 0|24@1+ (1,0) [0|16777215] "km" DISPLAY
+ SG_ FuelTotalDamped : 24|8@1+ (1,0) [0|255] "l" DISPLAY
+ SG_ FuelLevelLeft : 32|8@1+ (0.5,0) [0|127.5] "l" DISPLAY
+ SG_ FuelLevelRight : 40|8@1+ (0.5,0) [0|127.5] "l" DISPLAY
+ SG_ Range : 48|16@1+ (0.0625,0) [0|4095.9375] "km" DISPLAY
+
+BO_ 841 JBE_FuelSenders: 5 JBE
+ SG_ FuelSenderRaw1 : 0|16@1+ (1,0) [0|65535] "counts" DISPLAY
+ SG_ FuelSenderRaw2 : 16|16@1+ (1,0) [0|65535] "counts" DISPLAY
+
+BO_ 760 KOMBI_DateTime: 8 KOMBI
+ SG_ Hour : 0|8@1+ (1,0) [0|23] "h" DISPLAY
+ SG_ Minute : 8|8@1+ (1,0) [0|59] "min" DISPLAY
+ SG_ Second : 16|8@1+ (1,0) [0|59] "s" DISPLAY
+ SG_ Day : 24|8@1+ (1,0) [1|31] "d" DISPLAY
+ SG_ Month : 36|4@1+ (1,0) [1|12] "mo" DISPLAY
+ SG_ Year : 40|16@1+ (1,0) [0|65535] "y" DISPLAY
+
+BO_ 304 Body_TerminalStatus: 8 Vector__XXX
+ SG_ TerminalStatus : 0|8@1+ (1,0) [0|255] "" DISPLAY
+
+
+
+CM_ "Reverse-engineered by TZey on a 2014 BMW F22 220d (N47D20C). Single 500 kbit/s bus, captured passively in listen-only mode. F-series scaling: do not reuse on E-series, the fuel sender curve in particular is different.";
+CM_ BO_ 165 "Approx 50 Hz. DLC 8 confirmed.";
+CM_ SG_ 165 EngineSpeed "Bytes 5-6 little-endian, quarter-rpm. The common (B6<<8)+B7 decode is WRONG: it quantises to 64 rpm steps and reads about 60 rpm with the engine stopped. Firmware forces values under 100 to zero.";
+CM_ SG_ 165 StatusConst "Byte 7. Constant 0xF1 on this car. Not part of the rpm value.";
+CM_ BO_ 755 "Only DLC >= 6 was confirmed; declared 8 here. Scaling is well supported by observed behaviour but not verified against a scan tool.";
+CM_ SG_ 755 ManifoldPressureAbs "Absolute, not gauge. Subtract an ambient reference sampled while rpm is 0 to get boost. Observed: idle 0 to +0.05 bar, overrun dip about -0.25 bar, full load about +0.9 bar. Drifts with weather when the engine is off, which is what identifies it as a real sensor.";
+CM_ BO_ 708 "Approx 7 Hz. Only DLC >= 2 confirmed; declared 8 here.";
+CM_ SG_ 708 FuelCounter "Rolling 16-bit fuel integrator, approx 1 microlitre per count. Absolute value is meaningless; difference it over time. Must be handled wrap-safe. 278 counts/s equals 1.0 L/h at warm idle. Frozen with the engine off, drops to about zero on overrun fuel cut.";
+CM_ BO_ 1017 "Only DLC >= 6 confirmed; declared 8 here.";
+CM_ SG_ 1017 VacuumDomainPressure "Byte 3. A pressure in the vacuum domain that clamps between 112 and 118. This is NOT boost, do not use it as such.";
+CM_ BO_ 417 "DLC 5 confirmed.";
+CM_ BO_ 816 "Approx every 10 seconds. DLC 8 confirmed.";
+CM_ SG_ 816 FuelTotalDamped "Integer litres, heavily damped and lags the real level.";
+CM_ SG_ 816 FuelLevelLeft "Cluster's computed level for the left tank lobe, truncated to 0.5 L steps. The cluster's internal 0.1 L value is never broadcast. Values above 90 are not level readings.";
+CM_ SG_ 816 FuelLevelRight "Cluster's computed level for the right tank lobe, truncated to 0.5 L steps.";
+CM_ BO_ 841 "5 Hz. DLC 5 confirmed.";
+CM_ SG_ 841 FuelSenderRaw1 "Raw sender counts, NOT litres. Nonlinear per tank lobe and only the cluster holds the curve. The E9x rule raw/160 = litres is wrong on F-series. To get 0.1 L resolution, anchor these against KOMBI_FuelOdometer half-litre ticks and interpolate.";
+CM_ SG_ 841 FuelSenderRaw2 "Second lobe. Which raw field maps to which physical side is not fixed and has to be learned by watching which one moves when a given side ticks.";
+CM_ BO_ 760 "DLC 8 confirmed.";
+CM_ SG_ 760 Month "High nibble of byte 4.";
+CM_ BO_ 304 "Only DLC >= 1 confirmed; declared 8 here.";
+CM_ SG_ 304 TerminalStatus "Byte 0. Nonzero means terminal live, 0x00 means off. Individual terminal codes were not decoded. Dips while cranking, so debounce before acting on it.";

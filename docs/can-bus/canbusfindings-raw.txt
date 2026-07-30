@@ -1,0 +1,94 @@
+F22 220d N47D20C 2014
+
+0x0A5 DME engine data (~50 Hz, DLC 8)
+
+RPM = ((B6 << 8) | B5) / 4
+
+WARNING: B7 is a constant status byte (0xF1), NOT the rpm low
+
+byte. Decoding ((B6<<8)+B7)/4 looks right but quantizes to
+
+64-rpm steps and reads "60 rpm" with the engine off.
+
+0x2F3 Manifold pressure / boost (DLC >= 6) (UNSURE, BUT MAPS CORRECT)
+
+raw = B4 | (B5 << 8) (0.5 mbar per count)
+
+ambient_ref = raw sampled while rpm == 0 (each ignition-on)
+
+boost_bar = (raw - ambient_ref) * 0.0005
+
+Notes: real sensor (jitters, drifts with weather). Idle approx
+
+0..+0.05, overrun dip approx -0.25, full load approx +0.9 bar.
+
+0x2C4 Fuel consumed integrator (~7 Hz, DLC >= 2)
+
+counter = B0 | (B1 << 8) rolling 16-bit, 1 uL per count
+
+rate_uL_s = delta(counter) / delta(t) (uint16 wrap-safe)
+
+L_per_h = rate_uL_s * 0.0036
+
+L_per_100km = L_per_h / speed_kmh * 100
+
+Verified: 278 uL/s = 1.0 L/h warm idle; frozen engine-off;
+
+matches cluster (29.5 vs 28.2 L/100km); full load = 59 mg/stroke.
+
+Drops to ~0 on overrun fuel cut.
+
+0x1A1 Vehicle speed (DLC 5)
+
+speed_kmh = ((B3 << 8) + B2) / 64
+
+0x3F9 Engine temperatures (DLC >= 6)
+
+coolant_C = B4 - 48
+
+oil_C = B5 - 48
+
+(B3 is a vacuum-domain pressure, clamps 112-118 - NOT boost)
+
+0x330 Kombi: odometer / fuel / range (~every 10 s, DLC 8)
+
+odometer_km = B0 | (B1 << 8) | (B2 << 16)
+
+B3 = damped/lagging total fuel, litres (int)
+
+left_litres = B4 * 0.5 (truncated to 0.5 L steps)
+
+right_litres = B5 * 0.5
+
+range_km = (B6 | (B7 << 8)) / 16
+
+Note: the cluster's internal 0.1 L values are NOT broadcast.
+
+0x349 Raw fuel tank senders, JBE (5 Hz, DLC 5)
+
+sender1 = B0 | (B1 << 8) raw counts, NOT litres
+
+sender2 = B2 | (B3 << 8)
+
+Nonlinear per tank lobe; only the Kombi has the litre curve.
+
+The E9x scaling "raw/160 = litres" is WRONG on F-series.
+
+Trick for 0.1 L resolution: every time a 0x330 half-litre byte
+
+ticks one step, store the smoothed raw as an anchor
+
+(raw <-> k*0.5 L) and interpolate between anchors.
+
+0x2F8 Date & time (DLC 8)
+
+B0 = hour, B1 = minute, B2 = second
+
+B3 = day, month = high nibble of B4
+
+year = B5 | (B6 << 8)
+
+0x130 Terminal status / ignition (DLC >= 1)
+
+ignition_on = (B0 != 0x00)
+
