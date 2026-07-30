@@ -5,6 +5,11 @@
 First public version. The firmware itself has been running in the car for a while; this is the point
 where it stopped being three files on my desktop.
 
+**Relicensed from GPL-3.0 to MIT.** The repo went up with GPL-3.0 and I have changed it to MIT. I am
+the only author so this is mine to do, but it does loosen the terms: closed-source forks are allowed
+now and they were not before. Anyone who forked while it was GPL-3.0 keeps GPL rights to that
+snapshot. The vendored Adafruit header was always BSD and stays BSD.
+
 Repo work:
 
 - Split the 320x240 background bitmap out of the sketch into `background.h`. It was 76,800 hex values
