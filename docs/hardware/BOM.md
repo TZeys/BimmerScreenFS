@@ -12,9 +12,17 @@ datasheet links are the ones worth reading before you buy.
 | 4 | DFPlayer Mini (DFR0299) | Plays the startup, shutdown and warning sounds off a microSD | 5 to 6 | [DFRobot](https://www.dfrobot.com/product-1121.html), [wiki and datasheet](https://wiki.dfrobot.com/dfr0299) |
 | 5 | LM2596 buck module | Drops the car's 12V to 5.0V | 1 to 3 | [TI datasheet](https://www.ti.com/lit/ds/symlink/lm2596.pdf) |
 
-Small stuff on top of that: a microSD card for the sounds, a small speaker, one 1k resistor for the
-DFPlayer's RX line, an inline fuse holder with a 1 to 2 A fuse, and wire. Call the whole thing
-25 to 40 EUR depending on how cheap you go on the display.
+Plus the small stuff:
+
+| Part | Notes |
+|------|-------|
+| 4 ohm 3 W speaker | straight off `SPK_1` and `SPK_2`, no external amp needed |
+| microSD card | FAT32, holds the five sounds. Any small card does, the files are tiny |
+| 1k resistor | series on the DFPlayer's `RX` line, per DFRobot's datasheet |
+| inline fuse holder, 1 to 2 A fuse | on the 12V tap, not optional |
+| wire, heatshrink | thin twisted pair for the CAN stub |
+
+Call the whole thing 25 to 40 EUR depending on how cheap you go on the display.
 
 ## Notes on the choices
 
@@ -43,7 +51,11 @@ the wiring, so check yours.
 
 **DFPlayer Mini is overkill for five sounds** and I would probably use a bare I2S DAC if I did it
 again. It is what I had. It does mean the sounds live on a swappable microSD instead of in flash,
-which is genuinely convenient when you want to change the warning chime without reflashing.
+which is genuinely convenient when you want to change the warning chime without reflashing. Its 3 W
+mono amp also drives the speaker directly, so there is nothing else to buy.
+
+It runs on the 5V rail. The datasheet allows 3.2 to 5V, but the amplifier gets noticeably quieter at
+the low end and you are already generating 5V for nothing else, so use it.
 
 ## What you also need
 

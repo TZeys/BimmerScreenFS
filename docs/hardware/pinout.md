@@ -86,12 +86,23 @@ described in [schematic.md](schematic.md).
 | `GND` | common ground |
 | `RX` | ESP32 GPIO21, through a 1k series resistor |
 | `TX` | ESP32 GPIO20 |
-| `SPK_1` / `SPK_2` | speaker |
+| `SPK_1` / `SPK_2` | 4 ohm 3 W speaker |
+
+`VCC` is on the 5V rail off the buck, not 3.3V. The module accepts 3.2 to 5V but the onboard
+amplifier is quieter at the bottom of that range.
 
 Runs at 9600 baud 8N1. The 1k resistor on the module's `RX` is what DFRobot's own datasheet asks
 for, and it does cut down on audible noise when the module is idle.
 
-Tracks on the microSD, in the order the firmware calls them:
+The speaker is a 4 ohm 3 W driver straight off `SPK_1` and `SPK_2`. DFPlayer has a 3 W mono
+amplifier built in, so it matches without an external amp.
+
+## microSD card
+
+The sounds live on a microSD card in the DFPlayer, not in the ESP32's flash. Format it FAT32 and
+name the files `0001.mp3`, `0002.mp3`, `0003.mp3`, `0004.mp3`, `0005.mp3`.
+
+Tracks, in the order the firmware calls them:
 
 | Track | Plays when |
 |-------|-----------|
@@ -102,6 +113,10 @@ Tracks on the microSD, in the order the firmware calls them:
 | 5 | ignition off |
 
 Volume is fixed at 30, which is the module's maximum, and `enableDAC()` is called at startup.
+
+The numbering is not cosmetic. DFPlayer indexes tracks by the order they were physically written to
+the card rather than by filename, so copy them across one at a time in order. See
+[build-and-flash.md](../firmware/build-and-flash.md) if the sounds come out in the wrong order.
 
 ## Power
 
@@ -115,8 +130,8 @@ Volume is fixed at 30, which is the module's maximum, and `enableDAC()` is calle
 Set the LM2596 output to 5.0V with the trimpot and check it with a meter **before** connecting the
 ESP32. These modules ship at whatever the pot was left at, and plenty arrive above 12V.
 
-## Not yet confirmed
+## Every pin here is confirmed
 
-I have not verified the DFPlayer's supply rail on my own build against the schematic, and the
-speaker is whatever small driver was in the parts bin rather than a specified part. If you are
-copying this exactly, measure rather than trust those two rows.
+Signal pins come from the sketch, the rails and the connector pins are from my own build. Nothing on
+this page is inferred from a reference design, so if something does not match your hardware it is
+because your modules differ, not because I guessed.
