@@ -66,8 +66,7 @@ does not leave you with a dead gauge for the whole drive.
 | DFPlayer Mini | sounds off a microSD, 5V | 5 to 6 |
 | LM2596 buck module | 12V down to 5.0V | 1 to 3 |
 
-Plus a 4 ohm 3 W speaker, which the DFPlayer's own 3 W amp drives directly, a microSD card, a 1k
-resistor for the DFPlayer's RX line, and an inline fuse. Roughly 25 to 40 EUR all in. Full list with
+Plus a 4 ohm 3 W speaker, which the DFPlayer's own 3 W amp drives directly and a microSD card. Roughly 25 to 40 EUR all in. Full list with
 links and the reasoning behind each choice is in [docs/hardware/BOM.md](docs/hardware/BOM.md).
 
 ## Wiring
@@ -139,7 +138,8 @@ pins are in the sketch and SCK and MOSI come from the board's default SPI.
 For sound, put five MP3s on a FAT32 microSD named `0001.mp3` through `0005.mp3`: ignition on, oil
 warning, coolant warning, rpm warning, ignition off. Copy them across one at a time, because
 DFPlayer indexes tracks by the order they were written to the card and not by filename. Getting that
-wrong is why people end up with the shutdown chime on startup.
+wrong is why people end up with the shutdown chime on startup. Note that not using a DFPlayer will cause a boot-loop.
+I will create a future sketch for use without it.
 
 Full instructions and how to test on a bench with no car are in
 [docs/firmware/build-and-flash.md](docs/firmware/build-and-flash.md).
