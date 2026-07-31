@@ -156,6 +156,13 @@ I have not confirmed it against a scan tool.
 **Tank accuracy needs a few drives.** Calibration anchors only appear when the cluster's half-litre
 value ticks over with the engine running. Until then the readout falls back to the coarse value.
 
+**Gray display when IGNITION OFF.** Currently the TFT display's backlight is directly wired to 3.3V from the ESP32.
+The ESP32 gets power the moment ACC Power turns on in the car (i.e unlocking it), and turns off about 30 min after locking the car.
+That means, when the ignition is not turned on, but the car is unlocked, the screen will be gray due to backlight bleed. 
+I am currently looking to powering the backlight directly from the Buck Converter, and using a MOSFET to switch that power on and off using the ESP32.
+That should eliminate that issue.
+
+
 ## Credits
 
 [loopybunny.co.uk/CarPC/k_can.html](http://www.loopybunny.co.uk/CarPC/k_can.html) is where I started
