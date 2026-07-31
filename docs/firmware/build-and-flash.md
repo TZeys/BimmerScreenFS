@@ -95,7 +95,8 @@ carries on with a display that never updates.
 
 ## Audio files
 
-Put five files on the microSD. The firmware calls tracks by index:
+Put five files on the microSD. GLaDOS style examples can be found (here)[https://github.com/TZeys/BimmerScreenFS/tree/main/docs/firmware/Audio-FIles]. 
+The firmware calls tracks by index:
 
 | Index | Plays on |
 |-------|----------|
