@@ -66,6 +66,11 @@ flowchart LR
     MP3 -->|TX| G20
     MP3 --> SPK
 ```
+## KiCAD Schematic
+
+<img width="3067" height="1836" alt="image" src="https://github.com/user-attachments/assets/7e5e3deb-e25a-4cbe-83bf-b3e442cc7910" />
+
+
 
 ## Grounds
 
@@ -82,12 +87,11 @@ chase.
 Pin 15 is fused at 20A because that fuse exists to protect the head unit's wiring, not a 250 mA
 display. Put a 1 to 2 A inline fuse in the tap, as close to the connector as the loom allows. A
 short in the module without one means a 20A fuse holding happily while the thin wire you added
-becomes the fuse.
+becomes the fuse. I personally did not use one, but I recommend doing so. _Do as I say, not as I do_
 
 ## Power and standby
 
-The connector diagram labels pin 15 as Terminal 30, which normally means permanent battery. On this
-car it does not behave that way. The rail comes up when the car is unlocked and drops about 30
+Pin 15 on the BMW F22 Headunit seems to be tapped to ACC power. The rail comes up when the car is unlocked and drops about 30
 minutes after it is locked, because BMW's energy management sleeps the head unit's supply rather
 than feeding it continuously.
 
@@ -113,11 +117,12 @@ the car locked and measuring, before you trust it.
 ## Tapping the bus
 
 Pins 9 and 11 at the headunit connector are the pair I used. Reaching them means pulling the head
-unit, which on the F22 is trim clips and four bolts rather than anything structural.
+unit, which on the F22 is trim clips and a few screws. Takes 3 minutes with some practice. 
 
 I would rather solder and heatshrink onto the back of the connector than use a piercing tap. A
-piercing tap on a twisted CAN pair breaks the twist at the junction and lets the stub radiate, and
-it eventually corrodes.
+piercing tap on a twisted CAN pair _CAN_ break the twist at the junction and lets the stub radiate, and
+it eventually corrodes. Impedance matching, signal reflections yada yada yada. I _did_ use taps, but when doing so, 
+keep tap short, twisted and as close to the termination as possible. Try to match wire guage as well!
 
 Keep the stub short. A tap on a 500 kbit/s bus is an unterminated branch, and long branches reflect.
 Mine is about 10 cm from connector to transceiver. Keep CANH and CANL twisted together right up to
