@@ -2,7 +2,7 @@
 
 Five modules, no PCB, no custom parts. Prices are rough mid-2026 EUR for single quantities from the
 usual places, and they move around a lot, so treat them as a ballpark rather than a quote. The
-datasheet links are the ones worth reading before you buy.
+datasheet links are the ones worth reading before you buy. Aliexpress might be your best option. Just copy the product name.
 
 | # | Part | What it does | Rough price | Where |
 |---|------|--------------|-------------|-------|
@@ -18,20 +18,15 @@ Plus the small stuff:
 |------|-------|
 | 4 ohm 3 W speaker | straight off `SPK_1` and `SPK_2`, no external amp needed |
 | microSD card | FAT32, holds the five sounds. Any small card does, the files are tiny |
-| 1k resistor | series on the DFPlayer's `RX` line, per DFRobot's datasheet |
-| inline fuse holder, 1 to 2 A fuse | on the 12V tap, not optional |
 | wire, heatshrink | thin twisted pair for the CAN stub |
 
 Call the whole thing 25 to 40 EUR depending on how cheap you go on the display.
 
 ## Notes on the choices
 
-**The regulator is a buck converter, not an LDO.** I originally wrote this down as an LDO and that
-was wrong. A linear regulator dropping 12V to 5V at the roughly 200 to 250 mA this build pulls
+**The regulator is a buck converter, not an LDO.** I originally used an LDO. A linear regulator dropping 12V to 5V at the roughly 200 to 250 mA this build pulls
 throws away about 1.75 W as heat, and a car interior in summer is the worst possible place to ask a
-small TO-220 to do that. The LM2596 switches instead, so it stays cool. Set the output to 5.0V with
-the trimpot and confirm it on a meter before you plug the ESP32 in. They do not arrive
-pre-adjusted.
+small TO-220 to do that. The LM2596 switches instead, so it stays cool.
 
 **The transceiver must be a 3.3V part.** The SN65HVD230 is exactly that, which is why it pairs with
 the ESP32 without level shifting. Most breakouts for it have no onboard regulator, so `VCC` goes to
@@ -61,5 +56,5 @@ the low end and you are already generating 5V for nothing else, so use it.
 
 - A USB-C cable for flashing. The ESP32-C3 has native USB, so no separate programmer.
 - Trim tools to get the head unit out. On the F22 it is clips and four bolts.
-- A multimeter. Not optional: you are setting a regulator output and confirming which pin at the
+- A multimeter. Not optional for trim-bucks: you are setting a regulator output and confirming which pin at the
   connector is which before you cut anything.
