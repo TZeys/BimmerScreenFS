@@ -76,7 +76,8 @@ termination populated, so check the board and remove it if it is there.
 
 The backlight is wired straight to 3.3V. There is no PWM and no brightness control anywhere in the
 firmware, so it is on at full whenever the module has power, including the half hour between locking
-the car and the supply rail dropping. See [schematic.md](schematic.md) for what that rail does.
+the car and the supply rail dropping. See [schematic.md](schematic.md) for what that rail does. 
+I'm working on implementing a MOSFET to switch the backlight with ignition signals.
 
 ## DFPlayer Mini
 
@@ -92,7 +93,7 @@ the car and the supply rail dropping. See [schematic.md](schematic.md) for what 
 amplifier is quieter at the bottom of that range.
 
 Runs at 9600 baud 8N1. The 1k resistor on the module's `RX` is what DFRobot's own datasheet asks
-for, and it does cut down on audible noise when the module is idle.
+for, and it does cut down on audible noise when the module is idle, but quite frankly is not needed imo.
 
 The speaker is a 4 ohm 3 W driver straight off `SPK_1` and `SPK_2`. DFPlayer has a 3 W mono
 amplifier built in, so it matches without an external amp.
@@ -130,8 +131,8 @@ the card rather than by filename, so copy them across one at a time in order. Se
 Set the LM2596 output to 5.0V with the trimpot and check it with a meter **before** connecting the
 ESP32. These modules ship at whatever the pot was left at, and plenty arrive above 12V.
 
-## Every pin here is confirmed
+## Every pin here is module specific
 
 Signal pins come from the sketch, the rails and the connector pins are from my own build. Nothing on
 this page is inferred from a reference design, so if something does not match your hardware it is
-because your modules differ, not because I guessed.
+because your modules differ. Always double check your own datasheets and pinouts! :)
