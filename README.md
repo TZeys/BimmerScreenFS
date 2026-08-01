@@ -74,8 +74,7 @@ links and the reasoning behind each choice is in [docs/hardware/BOM.md](docs/har
 Power and CAN both come off the head unit connector (A42x1B): pin 15 for 12V, pin 12 for ground,
 pin 11 for CAN high, pin 9 for CAN low.
 
-That 12V rail is worth understanding, because it is what makes the whole thing self-managing. The
-connector labels it Terminal 30, but on this car it is not permanently live: it comes up when the car
+That 12V rail is worth understanding. On most F-series cars it is not permanently live: it comes up when the car
 is unlocked and drops roughly 30 minutes after it is locked, since BMW's energy management sleeps the
 head unit feed. So the display powers itself up when you get in, finishes its shutdown animation
 after ignition off because the rail is still there, and then goes off by itself later. No sleep code,
@@ -88,7 +87,6 @@ true, so check your rail first.
 | TFT SCK / MOSI / CS / DC | 4 / 6 / 8 / 1 |
 | DFPlayer RX / TX | 20 / 21 |
 
-![wiring](docs/hardware/wiring-diagram.svg)
 
 <img width="3067" height="1836" alt="image" src="https://github.com/user-attachments/assets/7e5e3deb-e25a-4cbe-83bf-b3e442cc7910" />
 
