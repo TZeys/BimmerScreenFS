@@ -90,6 +90,8 @@ true, so check your rail first.
 
 ![wiring](docs/hardware/wiring-diagram.svg)
 
+<img width="3067" height="1836" alt="image" src="https://github.com/user-attachments/assets/7e5e3deb-e25a-4cbe-83bf-b3e442cc7910" />
+
 Full pin tables are in [docs/hardware/pinout.md](docs/hardware/pinout.md) and the wiring notes,
 including the three pin conflicts that work by luck rather than design, are in
 [docs/hardware/schematic.md](docs/hardware/schematic.md). Read the pinout doc before wiring anything.
