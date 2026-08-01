@@ -30,9 +30,7 @@ small TO-220 to do that. The LM2596 switches instead, so it stays cool.
 
 **The transceiver must be a 3.3V part.** The SN65HVD230 is exactly that, which is why it pairs with
 the ESP32 without level shifting. Most breakouts for it have no onboard regulator, so `VCC` goes to
-3.3V and never to 5V. Also check whether your board has a 120 ohm termination resistor fitted and
-take it off if so. The car's bus is already terminated at both ends and this module is a passive
-listener hanging off the middle of it.
+3.3V and never to 5V.
 
 **Display driver has to be ILI9341.** The sketch includes `Adafruit_ILI9341.h` and calls
 `setRotation(1)` for landscape 320x240. An ST7789 or ILI9488 panel of the same size will not work
